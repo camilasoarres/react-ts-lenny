@@ -58,3 +58,7 @@
   color: rgb(161, 84, 161);
   text-align: right;
 }
+
+.error {
+  color: tomato;
+}
