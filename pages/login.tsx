@@ -1,18 +1,16 @@
 // Libs
 import React, { useState } from "react";
-import { useRouter } from 'next/router';
-import Link from 'next/link';
+import Router from "next/router";
+import Link from "next/link";
 import { TextInput } from "../components/input";
 
 // Styles
 import styles from "../styles/Home.module.css";
 import { useUserData } from "../utils/hooks";
-import { validateEmail, validatePassword } from "../utils/validation";
 
 const Login = () => {
-  const { updateData, isDataValid, errors, updateErrors } = useUserData();
+  const { userData, updateData } = useUserData();
   const [messageError, setMessageError] = useState("");
-  const router = useRouter();
 
   const handleChange = (ev: React.SyntheticEvent<HTMLInputElement>) => {
     const value = ev.currentTarget.value;
@@ -25,14 +23,11 @@ const Login = () => {
 
   const saveForm = (ev: React.SyntheticEvent<HTMLFormElement>) => {
     ev.preventDefault();
-
-    if (!isDataValid()) {
+    console.log("userData", userData);
+    if (userData.errorId) {
       setMessageError("Algo de errado não está certo!");
     } else {
-      router.push('/dashboard')
-      setTimeout(() => {
-        setMessageError("");
-      }, 3000);
+      Router.push("/dashboard");
     }
   };
 
@@ -44,44 +39,33 @@ const Login = () => {
           label="Nome"
           name="name"
           type="text"
+          required
           onChange={handleChange}
-          validation={(value) => {
-            updateErrors({
-              name: value.length ? "" : "Invalid name",
-            });
-          }}
-          error={errors.name}
         />
 
         <TextInput
           label="Email"
           name="email"
           type="email"
+          required
           onChange={handleChange}
-          validation={(value) => {
-            updateErrors({
-              email: validateEmail(value) ? "" : "Invalid email",
-            });
-          }}
-          error={errors.email}
+          error="Invalid email"
+          hasError={userData.errorId === "InvalidEmail"}
         />
 
         <TextInput
           label="Senha"
           name="password"
           type="password"
+          required
           onChange={handleChange}
-          validation={(value) => {
-            updateErrors({
-              password: validatePassword(value) ? "" : "Invalid password",
-            });
-          }}
-          error={errors.password}
+          error="Invalid Password"
+          hasError={userData.errorId === "InvalidPassword"}
         />
         <input className={styles.button} type="submit" value="Entrar" />
       </form>
 
-      <Link href="/register">
+      <Link href="/register" passHref>
         <button className={styles.createAccount}>Criar conta</button>
       </Link>
     </div>
