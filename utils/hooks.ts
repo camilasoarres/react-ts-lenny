@@ -1,34 +1,49 @@
-import { useState } from "react";
-import { UserData, UserFormError } from "./types";
+import Router from "next/router";
+import { useEffect, useState } from "react";
+import { UserData } from "./types";
+import { isEmailValid, isPasswordValid } from "./validation";
 
 export function useUserData() {
   const [userData, setUserData] = useState<UserData>({});
-  const [errors, setErrors] = useState<UserFormError>({});
 
   function updateData(newData: UserData) {
+    const email = newData.email || userData?.email;
+    const password = newData.password || userData.password;
+
+    let errorId: typeof userData.errorId = undefined;
+
+    if (email && !isEmailValid(email)) {
+      errorId = "InvalidEmail";
+    }
+
+    if (password && !isPasswordValid(password)) {
+      errorId = "InvalidPassword";
+    }
+
     setUserData({
       ...userData,
       ...newData,
+      errorId,
     });
   }
 
-  function isDataValid() {
-    return (
-      userData.name &&
-      !errors.name &&
-      userData.email &&
-      !errors.email &&
-      userData.password &&
-      !errors.password
-    );
+  return { userData, updateData };
+}
+
+export function useUser() {
+  const key = "x-app-user";
+
+  useEffect(() => {
+    const user = process.browser && localStorage.getItem(key);
+    if (!user) {
+      Router.push("/login");
+    }
+  }, []);
+
+  function logout() {
+    localStorage.removeItem(key);
+    Router.push("/login");
   }
 
-  function updateErrors(newData: UserFormError) {
-    setErrors({
-      ...errors,
-      ...newData,
-    });
-  }
-
-  return { userData, updateData, isDataValid, errors, updateErrors } as const;
+  return { logout };
 }

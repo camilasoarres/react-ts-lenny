@@ -1,12 +1,13 @@
 // Libs
 import React from "react";
 import styled from "styled-components";
-import Link from 'next/link';
+import Link from "next/link";
+import { useUser } from "../utils/hooks";
 
 const Container = styled.div`
   height: 100vh;
   overflow-y: hidden;
-  color: #009AAB;
+  color: #009aab;
 `;
 
 const Header = styled.div`
@@ -14,7 +15,7 @@ const Header = styled.div`
   justify-content: space-around;
   align-items: center;
   width: 100%;
-  background: #81A6B3;
+  background: #81a6b3;
   color: #fff;
   height: 5rem;
 
@@ -43,7 +44,7 @@ const Sidebar = styled.aside`
   justify-content: center;
   align-items: center;
   width: 300px;
-  border-right: solid 5px #009AAB;
+  border-right: solid 5px #009aab;
   height: 100%;
 
   > p {
@@ -67,13 +68,13 @@ const Content = styled.div`
 `;
 
 const Dashboard = () => {
+  const { logout } = useUser();
+
   return (
     <Container>
       <Header>
         <p>header</p>
-        <Link href={'/'}>
-          <button>sair</button>
-        </Link>
+        <button onClick={() => logout()}>sair</button>
       </Header>
       <Box>
         <Sidebar>
