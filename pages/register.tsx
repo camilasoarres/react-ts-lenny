@@ -28,9 +28,6 @@ const Login = () => {
       setMessageError("Algo de errado não está certo!");
     } else {
       Router.push("/login");
-      // setTimeout(() => {
-      //   setMessageError("");
-      // }, 3000);
     }
   };
 

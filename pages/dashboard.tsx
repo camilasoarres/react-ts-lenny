@@ -1,8 +1,8 @@
 // Libs
-import React from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
-import Link from "next/link";
 import { useUser } from "../utils/hooks";
+import Router from "next/router";
 
 const Container = styled.div`
   height: 100vh;
@@ -70,10 +70,20 @@ const Content = styled.div`
 const Dashboard = () => {
   const { logout } = useUser();
 
+  useEffect(() => {
+    const user = process.browser && localStorage.getItem('x-app-user');
+    if (!user) {
+      Router.push("/login");
+    }
+  }, []);
+
+  const user = process.browser && JSON.parse(localStorage.getItem('x-app-user'));
+
   return (
     <Container>
       <Header>
         <p>header</p>
+        <span>{user?.email}</span>
         <button onClick={() => logout()}>sair</button>
       </Header>
       <Box>
@@ -81,7 +91,7 @@ const Dashboard = () => {
           <p>sidebar</p>
         </Sidebar>
         <Content>
-          <p>conteúdo</p>
+          <h1>Boas vindas, {user?.name}!</h1>
         </Content>
       </Box>
     </Container>

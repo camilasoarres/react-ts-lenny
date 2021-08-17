@@ -23,10 +23,11 @@ const Login = () => {
 
   const saveForm = (ev: React.SyntheticEvent<HTMLFormElement>) => {
     ev.preventDefault();
-    console.log("userData", userData);
+
     if (userData.errorId) {
       setMessageError("Algo de errado não está certo!");
     } else {
+      localStorage.setItem('x-app-user', JSON.stringify(userData));
       Router.push("/dashboard");
     }
   };
