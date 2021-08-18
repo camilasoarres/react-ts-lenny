@@ -1,8 +1,7 @@
 // Libs
-import React, { useEffect } from "react";
+import React from "react";
 import styled from "styled-components";
-import { useUser } from "../utils/hooks";
-import Router from "next/router";
+import { useUser } from "@hooks/useUser";
 
 const Container = styled.div`
   height: 100vh;
@@ -68,16 +67,7 @@ const Content = styled.div`
 `;
 
 const Dashboard = () => {
-  const { logout } = useUser();
-
-  useEffect(() => {
-    const user = process.browser && localStorage.getItem('x-app-user');
-    if (!user) {
-      Router.push("/login");
-    }
-  }, []);
-
-  const user = process.browser && JSON.parse(localStorage.getItem('x-app-user'));
+  const { user, logout } = useUser();
 
   return (
     <Container>

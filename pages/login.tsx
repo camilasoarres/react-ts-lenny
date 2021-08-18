@@ -1,57 +1,40 @@
 // Libs
-import React, { useState } from "react";
-import Router from "next/router";
+import React from "react";
 import Link from "next/link";
-import { TextInput } from "../components/input";
+import { TextInput } from "@components/input";
 
 // Styles
 import styles from "../styles/Home.module.css";
-import { useUserData } from "../utils/hooks";
+import { useLoginForm } from "@hooks/useLoginForm";
 
 const Login = () => {
-  const { userData, updateData } = useUserData();
-  const [messageError, setMessageError] = useState("");
-
-  const handleChange = (ev: React.SyntheticEvent<HTMLInputElement>) => {
-    const value = ev.currentTarget.value;
-    const field = ev.currentTarget.name;
-
-    updateData({
-      [field]: value,
-    });
-  };
-
-  const saveForm = (ev: React.SyntheticEvent<HTMLFormElement>) => {
-    ev.preventDefault();
-
-    if (userData.errorId) {
-      setMessageError("Algo de errado não está certo!");
-    } else {
-      localStorage.setItem('x-app-user', JSON.stringify(userData));
-      Router.push("/dashboard");
-    }
-  };
+  const { loginData, updateData, submitData } = useLoginForm();
 
   return (
     <div className={styles.container}>
-      <form className={styles.form} onSubmit={saveForm}>
-        <p className={styles.messageError}>{messageError}</p>
-        <TextInput
-          label="Nome"
-          name="name"
-          type="text"
-          required
-          onChange={handleChange}
-        />
+      <form
+        className={styles.form}
+        onSubmit={(event) => {
+          event.preventDefault();
+          submitData();
+        }}
+      >
+        {loginData.errorId && (
+          <p className={styles.messageError}>{loginData.errorId}</p>
+        )}
+        {loginData.resolved && !loginData.errorId && (
+          <p className={styles.messageSuccess}>Sucesso!</p>
+        )}
 
         <TextInput
           label="Email"
           name="email"
           type="email"
           required
-          onChange={handleChange}
+          value={loginData.email}
+          onChange={(e) => updateData({ email: e.target.value })}
           error="Invalid email"
-          hasError={userData.errorId === "InvalidEmail"}
+          hasError={loginData.errorId === "EmptyEmail"}
         />
 
         <TextInput
@@ -59,9 +42,10 @@ const Login = () => {
           name="password"
           type="password"
           required
-          onChange={handleChange}
+          value={loginData.password}
+          onChange={(e) => updateData({ password: e.target.value })}
           error="Invalid Password"
-          hasError={userData.errorId === "InvalidPassword"}
+          hasError={loginData.errorId === "EmptyPassword"}
         />
         <input className={styles.button} type="submit" value="Entrar" />
       </form>

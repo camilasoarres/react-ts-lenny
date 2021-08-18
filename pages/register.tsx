@@ -1,35 +1,14 @@
 // Libs
-import React, { useState } from "react";
+import React from "react";
 import Link from "next/link";
-import Router from "next/router";
-import { TextInput } from "../components/input";
+import { TextInput } from "@components/input";
 
 // Styles
 import styles from "../styles/Home.module.css";
-import { useUserData } from "../utils/hooks";
+import { useRegisterForm } from "@hooks/useRegisterForm";
 
 const Login = () => {
-  const { userData, updateData } = useUserData();
-  const [messageError, setMessageError] = useState("");
-
-  const handleChange = (ev: React.SyntheticEvent<HTMLInputElement>) => {
-    const value = ev.currentTarget.value;
-    const field = ev.currentTarget.name;
-
-    updateData({
-      [field]: value,
-    });
-  };
-
-  const saveForm = (ev: React.SyntheticEvent<HTMLFormElement>) => {
-    ev.preventDefault();
-
-    if (!userData.errorId) {
-      setMessageError("Algo de errado não está certo!");
-    } else {
-      Router.push("/login");
-    }
-  };
+  const { userData, updateData, submitData } = useRegisterForm();
 
   return (
     <div className={styles.container2}>
@@ -37,14 +16,26 @@ const Login = () => {
         <button className={styles.buttonBack}>{"< Voltar"}</button>
       </Link>
       <h1 className={styles.title}>Criar conta</h1>
-      <form className={styles.form2} onSubmit={saveForm}>
-        <p className={styles.messageError}>{messageError}</p>
+      <form
+        className={styles.form2}
+        onSubmit={(event) => {
+          event.preventDefault();
+          submitData();
+        }}
+      >
+        {userData.errorId && (
+          <p className={styles.messageError}>{userData.errorId}</p>
+        )}
+        {userData.resolved && !userData.errorId && (
+          <p className={styles.messageSuccess}>Sucesso!</p>
+        )}
         <TextInput
           label="Nome"
           name="name"
           type="text"
           required
-          onChange={handleChange}
+          value={userData.name}
+          onChange={(e) => updateData({ name: e.target.value })}
         />
 
         <TextInput
@@ -52,7 +43,8 @@ const Login = () => {
           name="email"
           type="email"
           required
-          onChange={handleChange}
+          value={userData.email}
+          onChange={(e) => updateData({ email: e.target.value })}
           error="Invalid email"
           hasError={userData.errorId === "InvalidEmail"}
         />
@@ -62,7 +54,8 @@ const Login = () => {
           name="password"
           type="password"
           required
-          onChange={handleChange}
+          value={userData.password}
+          onChange={(e) => updateData({ password: e.target.value })}
           error="Invalid password"
           hasError={userData.errorId === "InvalidPassword"}
         />
