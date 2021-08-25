@@ -1,9 +1,9 @@
 import Router from "next/router";
 import { useEffect, useState } from "react";
-import { UserData } from "@utils/types";
+import { RegisterUserData } from "@services/users/types";
 
 export function useUser() {
-  const [user, setUser] = useState<UserData>();
+  const [user, setUser] = useState<RegisterUserData>();
 
   const key = "x-app-user";
 

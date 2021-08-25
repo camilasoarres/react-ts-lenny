@@ -1,4 +1,5 @@
-import { RegisterFormState } from "./types";
+import { RegisterFormState, LoginFormState } from "./types";
+
 import { mapUser } from "./utils";
 
 const appId = "VBEBgyYIb8O2VGq9iV15TWgwwvZ5lDFegTyWSA3h";
@@ -16,6 +17,24 @@ class UserApi {
         "X-Parse-Revocable-Session": revokableSession,
       },
       body: JSON.stringify(mapUser(user)),
+    }).then(async (res) => ({
+      statusCode: res.status,
+      data: await res.json(),
+    }));
+  }
+
+  SignIn(user: LoginFormState) {
+    const href = new URL(baseUrl + "/login")
+    const params = {username:user.email, password:user.password}
+
+    Object.keys(params).forEach(key => href.searchParams.append(key, params[key]))
+    return fetch(href, {
+      method: "GET",
+      headers: {
+        "X-Parse-Application-Id": appId,
+        "X-Parse-REST-API-Key": apiKey,
+        "X-Parse-Revocable-Session": revokableSession,
+      }
     }).then(async (res) => ({
       statusCode: res.status,
       data: await res.json(),
