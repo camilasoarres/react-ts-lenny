@@ -23,7 +23,7 @@ export function useLoginForm() {
 
     if (statusCode !== 200) {
       return updateData({
-        errorId: "RegisterFailed",
+        errorId: "LoginFailed",
       });
     }
 
@@ -32,8 +32,7 @@ export function useLoginForm() {
     });
 
     localStorage.setItem('x-app-user', JSON.stringify(data));
-    Router.push("/dashboard");
-    return
+    return Router.push("/dashboard");
   }
 
   function submitData() {

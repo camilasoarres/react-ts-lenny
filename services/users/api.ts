@@ -24,17 +24,18 @@ class UserApi {
   }
 
   SignIn(user: LoginFormState) {
-    const href = new URL(baseUrl + "/login")
+    const url = new URL(baseUrl + "/login")
     const params = {username:user.email, password:user.password}
 
-    Object.keys(params).forEach(key => href.searchParams.append(key, params[key]))
-    return fetch(href, {
+    url.search = new URLSearchParams(params).toString();
+
+    return fetch(url.toString(), {
       method: "GET",
       headers: {
         "X-Parse-Application-Id": appId,
         "X-Parse-REST-API-Key": apiKey,
         "X-Parse-Revocable-Session": revokableSession,
-      }
+      },
     }).then(async (res) => ({
       statusCode: res.status,
       data: await res.json(),
