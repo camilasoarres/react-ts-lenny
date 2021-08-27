@@ -1,4 +1,16 @@
-import { LoginFormState, RegisterFormState, RegisterUserData } from "./types";
+import {
+  LoginFormState,
+  RegisterFormState,
+  RegisterUserData,
+  User,
+} from "./types";
+
+export function createEmptyUserState(): User {
+  return {
+    name: "",
+    email: "",
+  };
+}
 
 export function createEmptyLoginFormState(): LoginFormState {
   return {

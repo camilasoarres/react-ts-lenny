@@ -5,7 +5,7 @@ import { TextInput } from "@components/input";
 
 // Styles
 import styles from "../styles/Home.module.css";
-import { useRegisterForm } from "@hooks/useRegisterForm";
+import { useRegisterForm } from "@hooks/users/useRegisterForm";
 
 const Login = () => {
   const { userData, updateData, submitData } = useRegisterForm();

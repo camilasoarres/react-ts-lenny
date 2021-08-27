@@ -1,7 +1,7 @@
 // Libs
 import React from "react";
 import styled from "styled-components";
-import { useUser } from "@hooks/useUser";
+import { useUser } from "@hooks/users/useUser";
 
 const Container = styled.div`
   height: 100vh;
