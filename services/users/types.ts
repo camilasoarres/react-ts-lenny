@@ -21,9 +21,12 @@ export type RegisterFormState = {
   resolved?: boolean;
 };
 
-export type LoginFormState = {
+export type LoginForm = {
   email: string;
   password: string;
-  errorId?: UserFormErrors;
-  resolved?: boolean;
+};
+
+export type User = {
+  name: string;
+  email: string;
 };

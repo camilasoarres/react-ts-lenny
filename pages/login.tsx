@@ -2,50 +2,57 @@
 import React from "react";
 import Link from "next/link";
 import { TextInput } from "@components/input";
+import { useForm } from "react-hook-form";
 
 // Styles
 import styles from "../styles/Home.module.css";
-import { useLoginForm } from "@hooks/useLoginForm";
+import { isEmailValid } from "@utils/validation";
+import { LoginForm } from "@services/users/types";
+import { useLoginSubmit } from "@hooks/users/useLoginSubmit";
 
 const Login = () => {
-  const { loginData, updateData, submitData } = useLoginForm();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginForm>();
+
+  const { errorId, submitData } = useLoginSubmit();
+
+  function onSubmit(data: LoginForm) {
+    submitData(data);
+  }
 
   return (
     <div className={styles.container}>
-      <form
-        className={styles.form}
-        onSubmit={(event) => {
-          event.preventDefault();
-          submitData();
-        }}
-      >
-        {loginData.errorId && (
-          <p className={styles.messageError}>{loginData.errorId}</p>
-        )}
-        {loginData.resolved && !loginData.errorId && (
-          <p className={styles.messageSuccess}>Sucesso!</p>
-        )}
+      <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
+        {errorId && <p className={styles.messageError}>{errorId}</p>}
 
         <TextInput
+          {...register("email", {
+            required: true,
+            pattern: {
+              message: "Invalid email",
+              value: isEmailValid,
+            },
+          })}
           label="Email"
-          name="email"
           type="email"
-          required
-          value={loginData.email}
-          onChange={(e) => updateData({ email: e.target.value })}
-          error="Invalid email"
-          hasError={loginData.errorId === "EmptyEmail"}
+          error={errors.email?.message}
+          hasError={!!errors.email?.type}
         />
 
         <TextInput
+          {...register("password", {
+            required: {
+              message: "Password required",
+              value: true,
+            },
+          })}
           label="Senha"
-          name="password"
           type="password"
-          required
-          value={loginData.password}
-          onChange={(e) => updateData({ password: e.target.value })}
-          error="Invalid Password"
-          hasError={loginData.errorId === "EmptyPassword"}
+          error={errors.password?.message}
+          hasError={!!errors.password?.type}
         />
         <input className={styles.button} type="submit" value="Entrar" />
       </form>
