@@ -1,6 +1,4 @@
-import { RegisterFormState, LoginFormState } from "./types";
-
-import { mapUser } from "./utils";
+import { RegisterForm, LoginForm } from "./types";
 
 const appId = "VBEBgyYIb8O2VGq9iV15TWgwwvZ5lDFegTyWSA3h";
 const apiKey = "hzPfTJprcKIPrPAez2g7I17N7yCSDk9Sd9vQtnwU";
@@ -8,7 +6,7 @@ const revokableSession = "1";
 const baseUrl = "https://parseapi.back4app.com";
 
 class UserApi {
-  SignUp(user: RegisterFormState) {
+  SignUp(user: RegisterForm) {
     return fetch(baseUrl + "/users", {
       method: "POST",
       headers: {
@@ -16,14 +14,14 @@ class UserApi {
         "X-Parse-REST-API-Key": apiKey,
         "X-Parse-Revocable-Session": revokableSession,
       },
-      body: JSON.stringify(mapUser(user)),
+      body: JSON.stringify(user),
     }).then(async (res) => ({
       statusCode: res.status,
       data: await res.json(),
     }));
   }
 
-  SignIn(user: LoginFormState) {
+  SignIn(user: LoginForm) {
     const url = new URL(baseUrl + "/login")
     const params = {username:user.email, password:user.password}
 
