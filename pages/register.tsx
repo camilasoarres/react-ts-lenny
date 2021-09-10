@@ -2,67 +2,143 @@
 import React from "react";
 import Link from "next/link";
 import { TextInput } from "@components/input";
+import { useForm } from "react-hook-form";
 
 // Styles
-import styles from "../styles/Home.module.css";
-import { useRegisterForm } from "@hooks/users/useRegisterForm";
+import { RegisterForm } from "@services/users/types";
+import { useRegisterSubmit } from "@hooks/users/useRegisterSubmit";
+import { isEmailValid, isPasswordValid } from "@utils/validation";
 
-const Login = () => {
-  const { userData, updateData, submitData } = useRegisterForm();
+const Register = () => {
+  const { errorId, submitData } = useRegisterSubmit();
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<RegisterForm>();
+
+  function onSubmit(data: RegisterForm) {
+    submitData(data);
+  }
 
   return (
-    <div className={styles.container2}>
-      <Link href={"/"}>
-        <button className={styles.buttonBack}>{"< Voltar"}</button>
+    <div className="container">
+      <Link href={"/"} passHref>
+        <button className="buttonBack">{"< Voltar"}</button>
       </Link>
-      <h1 className={styles.title}>Criar conta</h1>
+      <h1 className="title">Criar conta</h1>
       <form
-        className={styles.form2}
-        onSubmit={(event) => {
-          event.preventDefault();
-          submitData();
-        }}
+        className="form"
+        onSubmit={handleSubmit(onSubmit)}
       >
-        {userData.errorId && (
-          <p className={styles.messageError}>{userData.errorId}</p>
-        )}
-        {userData.resolved && !userData.errorId && (
-          <p className={styles.messageSuccess}>Sucesso!</p>
-        )}
+        {errorId && <p className="messageError">{errorId}</p>}
+
         <TextInput
-          label="Nome"
-          name="name"
+          label="Name"
           type="text"
-          required
-          value={userData.name}
-          onChange={(e) => updateData({ name: e.target.value })}
+          {...register("username", {
+            required: {
+              value: true,
+              message: 'Nome não foi preenchido'
+            }
+          })}
+          error={errors.username?.message}
+          hasError={!!errors.username?.type}
         />
 
         <TextInput
           label="Email"
-          name="email"
-          type="email"
-          required
-          value={userData.email}
-          onChange={(e) => updateData({ email: e.target.value })}
-          error="Invalid email"
-          hasError={userData.errorId === "InvalidEmail"}
+          type="text"
+          {...register("email", {
+            required: {
+              value: true,
+              message: 'Email não foi preenchido'
+            },
+            pattern: {
+              message: "Invalid email",
+              value: isEmailValid,
+            },
+          })}
+          error={errors.email?.message}
+          hasError={!!errors.email?.type}
         />
 
         <TextInput
+          {...register("password", {
+            required: {
+              value: true,
+              message: 'Senha não foi preenchida'
+            },
+            pattern: {
+              message: "Invalid password",
+              value: isPasswordValid,
+            },
+          })}
           label="Senha"
-          name="password"
           type="password"
-          required
-          value={userData.password}
-          onChange={(e) => updateData({ password: e.target.value })}
-          error="Invalid password"
-          hasError={userData.errorId === "InvalidPassword"}
+          error={errors.password?.message}
+          hasError={!!errors.password?.type}
         />
-        <input className={styles.button} type="submit" value="Cadastrar" />
+        <input className="button" type="submit" value="Cadastrar" />
       </form>
+      <style jsx>{`
+        .container {
+          min-height: 100vh;
+          padding: 0 0.5rem;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          height: 100vh;
+          background: linear-gradient(80deg, #49E9FA 20%, #009AAB 100%);
+        }
+        .messageError {
+          width: 100%;
+          margin: 0;
+          color: #F7750C;
+          text-align: right;
+        }
+        .button {
+          align-self: center;
+          width: 150px;
+          height: 45px;
+          margin-top: 2rem;
+          font-size: 1.15rem;
+          border-radius: 2px;
+          color: #fff;
+          background: #009AAB;
+          border: none;
+          outline: none;
+          cursor: pointer;
+        }
+        
+        .form {
+          display: flex;
+          flex-direction: column;
+          width: 450px;
+          padding: 3rem;
+          border-radius: 6px;
+          background: #fff;
+        }
+        .buttonBack {
+          width: 150px;
+          height: 45px;
+          margin-top: 1rem;
+          font-size: 1.15rem;
+          border-radius: 2px;
+          color: #81A6B3;
+          background: #fff;
+          border: none;
+          outline: none;
+          cursor: pointer;
+        }
+        .title {
+          color: #009AAB;
+        }
+      `}</style>
     </div>
   );
 };
 
-export default Login;
+export default Register;
